@@ -74,6 +74,8 @@ const (
 	APIEndpointInsight            = "/v2/bot/insight/%s"
 	APIEndpointGetBotInfo         = "/v2/bot/info"
 
+	APIEndpointSetWebhookEndpoint = "/v2/bot/channel/webhook/endpoint"
+
 	APIEndpointIssueAccessToken  = "/v2/oauth/accessToken"
 	APIEndpointRevokeAccessToken = "/v2/oauth/revoke"
 
