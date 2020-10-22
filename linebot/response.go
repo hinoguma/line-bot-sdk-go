@@ -104,6 +104,12 @@ type BotInfoResponse struct {
 	MarkAsReadMode MarkAsReadMode `json:"markAsReadMode"`
 }
 
+// WebhookEndpointInfoResponse type
+type WebhookEndpointInfoResponse struct {
+	Endpoint string `json:"endpoint"`
+	Active   bool   `json:"active"`
+}
+
 // MessagesNumberDeliveryResponse type
 type MessagesNumberDeliveryResponse struct {
 	Status          string `json:"status"`
@@ -397,6 +403,18 @@ func decodeToBotInfoResponse(res *http.Response) (*BotInfoResponse, error) {
 	}
 	decoder := json.NewDecoder(res.Body)
 	result := &BotInfoResponse{}
+	if err := decoder.Decode(result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func decodeToWebhookEndpointInfoResponse(res *http.Response) (*WebhookEndpointInfoResponse, error) {
+	if err := checkResponse(res); err != nil {
+		return nil, err
+	}
+	decoder := json.NewDecoder(res.Body)
+	result := &WebhookEndpointInfoResponse{}
 	if err := decoder.Decode(result); err != nil {
 		return nil, err
 	}

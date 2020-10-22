@@ -21,29 +21,29 @@ import (
 	"io"
 )
 
-// SetWebhookEndpointCall type
-type SetWebhookEndpointCall struct {
+// SetWebhookEndpointURLCall type
+type SetWebhookEndpointURLCall struct {
 	c   *Client
 	ctx context.Context
 
 	endpoint string
 }
 
-// SetWebhookEndpoint method
-func (client *Client) SetWebhookEndpoint(webhookEndpoint string) *SetWebhookEndpointCall {
-	return &SetWebhookEndpointCall{
+// SetWebhookEndpointURL method
+func (client *Client) SetWebhookEndpointURL(webhookEndpoint string) *SetWebhookEndpointURLCall {
+	return &SetWebhookEndpointURLCall{
 		c:        client,
 		endpoint: webhookEndpoint,
 	}
 }
 
 // WithContext method
-func (call *SetWebhookEndpointCall) WithContext(ctx context.Context) *SetWebhookEndpointCall {
+func (call *SetWebhookEndpointURLCall) WithContext(ctx context.Context) *SetWebhookEndpointURLCall {
 	call.ctx = ctx
 	return call
 }
 
-func (call *SetWebhookEndpointCall) encodeJSON(w io.Writer) error {
+func (call *SetWebhookEndpointURLCall) encodeJSON(w io.Writer) error {
 	enc := json.NewEncoder(w)
 	return enc.Encode(&struct {
 		Endpoint string `json:"endpoint"`
@@ -53,15 +53,44 @@ func (call *SetWebhookEndpointCall) encodeJSON(w io.Writer) error {
 }
 
 // Do method
-func (call *SetWebhookEndpointCall) Do() (*BasicResponse, error) {
+func (call *SetWebhookEndpointURLCall) Do() (*BasicResponse, error) {
 	var buf bytes.Buffer
 	if err := call.encodeJSON(&buf); err != nil {
 		return nil, err
 	}
-	res, err := call.c.put(call.ctx, APIEndpointSetWebhookEndpoint, &buf)
+	res, err := call.c.put(call.ctx, APIEndpointWebhookSettings, &buf)
 	if err != nil {
 		return nil, err
 	}
 	defer closeResponse(res)
 	return decodeToBasicResponse(res)
+}
+
+// GetWebhookEndpointInfoCall type
+type GetWebhookEndpointInfoCall struct {
+	c   *Client
+	ctx context.Context
+}
+
+// GetWebhookEndpointInfo method
+func (client *Client) GetWebhookEndpointInfo() *GetWebhookEndpointInfoCall {
+	return &GetWebhookEndpointInfoCall{
+		c: client,
+	}
+}
+
+// WithContext method
+func (call *GetWebhookEndpointInfoCall) WithContext(ctx context.Context) *GetWebhookEndpointInfoCall {
+	call.ctx = ctx
+	return call
+}
+
+// Do method
+func (call *GetWebhookEndpointInfoCall) Do() (*WebhookEndpointInfoResponse, error) {
+	res, err := call.c.get(call.ctx, call.c.endpointBase, APIEndpointWebhookSettings, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer closeResponse(res)
+	return decodeToWebhookEndpointInfoResponse(res)
 }
